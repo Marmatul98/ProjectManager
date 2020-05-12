@@ -1,0 +1,20 @@
+﻿@inject SignInManager<IdentityUser> signInManager;
+@{
+    ViewData["Title"] = "Projects landing page";
+}
+
+<div class="text-center">
+    <h1>Select course to list projects</h1>
+    @if (signInManager.IsSignedIn(User))
+    {
+        <p>
+            <a asp-action="Create" asp-controller="Projects">Create New Project</a>
+        </p>
+    }
+    @{
+        foreach (string courseName in ViewBag.Courses)
+        {
+            <a asp-action="List" asp-controller="Projects" asp-route-courseName="@courseName" class="btn btn-primary">@courseName</a>
+        }
+    }
+</div>

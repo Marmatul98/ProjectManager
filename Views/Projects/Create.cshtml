@@ -1,0 +1,105 @@
+﻿@model ProjectManager.ViewModels.ProjectCreateViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Project</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form enctype="multipart/form-data" asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StudentID" class="control-label"></label>
+                <p><a asp-action="Create" asp-route-fromProject="@true" asp-controller="Students" class="btn btn-outline-primary">New Student</a></p>
+                <select asp-for="StudentID" class="form-control" asp-items="ViewBag.StudentNames"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Year" class="control-label"></label>
+                <select asp-for="Year" asp-items="ProjectManager.Utils.YearUtil.GetSelectListOfAvailableYears()" class="form-control"></select>
+                <span asp-validation-for="Year" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Course" class="control-label"></label>
+                <select asp-for="Course" asp-items="Html.GetEnumSelectList<ProjectManager.Enums.Course>()" class="form-control"></select>
+                <span asp-validation-for="Course" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Documentation" class="col-form-label"></label>
+                <input asp-for="Documentation" class="form-control-file" type="file" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Presentation" class="col-form-label"></label>
+                <input asp-for="Presentation" class="form-control-file" type="file" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Project" class="col-form-label"></label>
+                <input asp-for="Project" class="form-control-file" type="file" />
+            </div>
+            <div class="form-group">
+                <label asp-for="ProjectKeywords" class="col-form-label"></label>
+                <p><a asp-action="Create" asp-route-fromProject="@true" asp-controller="Keywords" class="btn btn-outline-primary">New Keyword</a></p>
+                <div class="col-md-offset-2 col-md-10">
+                    <table>
+                        <tr>
+                            @{
+                                int cnt = 0;
+                                List<ProjectManager.ViewModels.AssignedKeywordData> keywords = ViewBag.Keywords;
+
+                                foreach (var keyword in keywords)
+                                {
+                                    if (cnt++ % 3 == 0)
+                                    {
+                                    @:</tr><tr>
+                                    }
+                                    @:<td>
+                                        <input type="checkbox"
+                                               name="selectedKeywords"
+                                               value="@keyword.KeywordID"
+                                               @(Html.Raw(keyword.Assigned ? "checked=\"checked\"" : "")) />
+                                        @:  @keyword.Name
+                                    @:</td>
+                                }
+                            @:</tr>
+                            }
+                        </table>
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        @{
+            if (ViewBag.Course == null)
+            {
+                <a asp-action="Index" asp-controller="Home">Back</a>
+            }
+            else
+            {
+                <a asp-action="List" asp-route-courseName="@ViewBag.Course">Back to List</a>
+            }
+        }
+
+    </div>
+
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }

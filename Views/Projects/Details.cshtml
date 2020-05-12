@@ -1,0 +1,67 @@
+﻿@model ProjectManager.Models.Project
+
+@{
+    ViewData["Title"] = "Details";
+    var documentationPath = "~/Documentations/" + Model.DocumentationPath;
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Project</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Student)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Student.Email)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Year)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Year)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Course)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Course)
+        </dd>
+        <dt class="col-sm-2">
+            @if (!String.IsNullOrEmpty(Model.DocumentationPath))
+            {
+                <a asp-action="DownloadFile" asp-route-fileName="@Model.DocumentationPath" asp-route-studentName="@Model.Student.LastName" asp-route-fileType="Documentation">Documentation</a>
+            }
+        </dt>
+        <dt class="col-sm-2">
+            @if (!String.IsNullOrEmpty(Model.PresentationPath))
+            {
+                <a asp-action="DownloadFile" asp-route-fileName="@Model.PresentationPath" asp-route-studentName="@Model.Student.LastName" asp-route-fileType="Presentation">Presentation</a>
+            }
+        </dt>
+        <dt class="col-sm-2">
+            @if (!String.IsNullOrEmpty(Model.ProjectPath))
+            {
+                <a asp-action="DownloadFile" asp-route-fileName="@Model.ProjectPath" asp-route-studentName="@Model.Student.LastName" asp-route-fileType="Project">Project</a>
+            }
+        </dt>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.ProjectID">Edit</a> |
+    <a asp-action="List" asp-route-courseName="@Model.Course.ToString()">Back to List</a>
+</div>

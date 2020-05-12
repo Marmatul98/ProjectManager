@@ -1,0 +1,106 @@
+﻿@model IEnumerable<ProjectManager.Models.Project>
+@inject SignInManager<IdentityUser> signInManager;
+
+@{
+    ViewData["Title"] = "List";
+}
+
+<h1>@ViewBag.CourseName</h1>
+<p>
+    <a asp-action="Index" asp-controller="Home">Back to Course Selection</a>
+</p>
+
+@if (signInManager.IsSignedIn(User))
+{
+    <p>
+        <a asp-action="Create" asp-route-fromCourse="@ViewBag.CourseName">Create New Project</a>
+    </p>
+}
+
+<div class="row">
+    <div class="col-md-10">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Title)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Student)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Year)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Course)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Title)
+                        </td>
+                        <td>
+                            @if (signInManager.IsSignedIn(User))
+                            {
+                                <a asp-action="Details" asp-controller="Students" asp-route-courseName="@item.Course.ToString()" asp-route-id="@item.StudentID">@item.Student.Name</a>
+                            }
+                            else
+                            {
+                                @Html.DisplayFor(modelItem => item.Student.Name)
+                            }
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Year)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Course)
+                        </td>
+                        <td>
+                            @if (signInManager.IsSignedIn(User))
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.ProjectID">Edit</a> @:|
+                                <a asp-action="Delete" asp-route-id="@item.ProjectID">Delete</a> @:|
+                            }
+                            <a asp-action="Details" asp-route-id="@item.ProjectID">Details</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-2">
+        <p><b>Keywords</b><p>
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                {
+                    ICollection<ProjectManager.ViewModels.AssignedKeywordData> keywords = ViewBag.FilterKeywords;
+                    foreach (var keyword in keywords)
+                    {
+                        <table>
+                            <tr>
+                                <td>
+                                    <input type="checkbox"
+                                           name="selectedKeywords"
+                                           value="@keyword.KeywordID"
+                                           @(Html.Raw(keyword.Assigned ? "checked=\"checked\"" : "")) />
+                                    @keyword.Name
+                                </td>
+
+                            </tr>
+                        </table>
+                    }
+                }
+                <div class="form-group">
+                    <input type="submit" value="Filter" class="btn btn-primary" />
+                </div>
+            }
+    </div>
+</div>
+
+
