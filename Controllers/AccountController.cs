@@ -21,6 +21,41 @@ namespace ProjectManager.Controllers
             this.signInManager = signInManager;
         }
 
+        [Authorize]
+        public IActionResult ListUsers()
+        {
+            var users = userManager.Users;
+            return View(users);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var user = await userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = $"User with ID = {id} cannot be found";
+                return View("NotFound");
+            }
+            else
+            {
+                var result = await userManager.DeleteAsync(user);
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("ListUsers");
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+                return View("ListUsers");
+
+            }
+        }
+
         [HttpGet]
         [Authorize]
         public IActionResult Register()
@@ -39,8 +74,7 @@ namespace ProjectManager.Controllers
 
                 if (result.Succeeded)
                 {
-                    await signInManager.SignInAsync(user, false);
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("ListUsers");
                 }
 
                 foreach (var error in result.Errors)
@@ -69,12 +103,11 @@ namespace ProjectManager.Controllers
                     return RedirectToAction("Index", "Home");
                 }
 
-                    ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
+                ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
             }
             return View(model);
         }
 
-        [HttpPost]
         public async Task<IActionResult> Logout()
         {
             await signInManager.SignOutAsync();

@@ -342,11 +342,6 @@ namespace ProjectManager.Controllers
             return RedirectToAction("List", "Projects", new { courseName = project.Course.ToString() });
         }
 
-        private bool ProjectExists(int id)
-        {
-            return _context.Projects.Any(e => e.ProjectID == id);
-        }
-
         public FileResult DownloadFile(string fileName, string studentName, string fileType)
         {
             string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", fileType, fileName);
